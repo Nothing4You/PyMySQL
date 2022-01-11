@@ -85,33 +85,3 @@ jobs:
           docker cp mysqld:/var/lib/mysql/client-key.pem "${HOME}"
           docker cp mysqld:/var/lib/mysql/client-cert.pem "${HOME}"
           pytest -v --cov --cov-config .coveragerc tests/test_auth.py;
-
-      - name: Report coverage
-        run: coveralls --service=github
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COVERALLS_FLAG_NAME: ${{ matrix.py }}-${{ matrix.db }}
-          COVERALLS_PARALLEL: true
-
-  coveralls:
-    name: Finish coveralls
-    runs-on: ubuntu-20.04
-    needs: test
-    steps:
-    - uses: actions/setup-python@v2
-      with:
-        python-version: 3.9
-
-    - uses: actions/cache@v2
-      with:
-        path: ~/.cache/pip
-        key: finish-pip-1
-        restore-keys: |
-          finish-pip-
-
-    - name: Finished
-      run: |
-        pip install --upgrade coveralls
-        coveralls --finish --service=github
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
